@@ -1,13 +1,27 @@
-describe("template spec", () => {
-  it("Submitting an image", () => {
-    cy.visit("/");
+describe("Image Registration", () => {
+  describe("Submitting an image with invalid inputs", () => {
+    it("Given I am on the image registration page", () => {
+      cy.visit("/");
+    });
 
-    cy.get("#title").type("test");
+    it("When I enter '' in the title field", () => {
+      cy.get("#title");
+    });
 
-    cy.get("#imageUrl").type(
-      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRNX-0p5rB_PI0B6oXnnUTkfCp_uZ1DBtcyYQ&s"
-    );
+    it("Then I enter '' in the URL field", () => {
+      cy.get("#imageUrl");
+    });
 
-    cy.get("#btnSubmit").click();
+    it("Then I click the submit button", () => {
+      cy.get("#btnSubmit").click();
+    });
+
+    it("Then I should see 'Please type a title for the image' message above the title field", () => {
+      cy.get("#titleFeedback").contains("Please type a title for the image");
+    });
+
+    it("And I should see 'Please type a valid URL' message above the imageUrl field", () => {
+      cy.get("#urlFeedback").contains("Please type a valid URL");
+    });
   });
 });
