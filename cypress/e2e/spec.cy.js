@@ -6,7 +6,16 @@ const elements = {
   urlFeedback: "#urlFeedback",
 };
 
+const imageLink =
+  "https://cdn.mos.cms.futurecdn.net/eM9EvWyDxXcnQTTyH8c8p5-1200-80.jpg";
+
+const checkIcon = `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 8'%3e%3cpath fill='%23198754' d='M2.3 6.73.6 4.53c-.4-1.04.46-1.4 1.1-.8l1.1 1.4 3.4-3.8c.6-.63 1.6-.27 1.2.7l-4 4.6c-.43.5-.8.4-1.1.1z'/%3e%3c/svg%3e")`;
+
 describe("Image Registration", () => {
+  after(() => {
+    cy.clearAllLocalStorage();
+  });
+
   describe("Submitting an image with invalid inputs", () => {
     it("Given I am on the image registration page", () => {
       cy.visit("/");
@@ -49,25 +58,15 @@ describe("Image Registration", () => {
     });
 
     it("Then I should see a check icon in the title field", () => {
-      cy.get(elements.title).should(
-        "have.css",
-        "background-image",
-        `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 8'%3e%3cpath fill='%23198754' d='M2.3 6.73.6 4.53c-.4-1.04.46-1.4 1.1-.8l1.1 1.4 3.4-3.8c.6-.63 1.6-.27 1.2.7l-4 4.6c-.43.5-.8.4-1.1.1z'/%3e%3c/svg%3e")`
-      );
+      cy.get(elements.title).should("have.css", "background-image", checkIcon);
     });
 
-    it("When I enter 'https://cdn.mos.cms.futurecdn.net/eM9EvWyDxXcnQTTyH8c8p5-1200-80.jpg' in the URL field", () => {
-      cy.get(elements.imageUrl).type(
-        "https://cdn.mos.cms.futurecdn.net/eM9EvWyDxXcnQTTyH8c8p5-1200-80.jpg"
-      );
+    it(`When I enter ${imageLink} in the URL field`, () => {
+      cy.get(elements.imageUrl).type(imageLink);
     });
 
     it("Then I should see a check icon in the imageUrl field", () => {
-      cy.get(elements.title).should(
-        "have.css",
-        "background-image",
-        `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 8'%3e%3cpath fill='%23198754' d='M2.3 6.73.6 4.53c-.4-1.04.46-1.4 1.1-.8l1.1 1.4 3.4-3.8c.6-.63 1.6-.27 1.2.7l-4 4.6c-.43.5-.8.4-1.1.1z'/%3e%3c/svg%3e")`
-      );
+      cy.get(elements.title).should("have.css", "background-image", checkIcon);
     });
 
     it("Then I can hit enter to submit the form", () => {
@@ -75,13 +74,7 @@ describe("Image Registration", () => {
     });
 
     it("And the list of registered images should be updated with the new item", () => {
-      cy.get("#card-list  img")
-        .last()
-        .should(
-          "have.attr",
-          "src",
-          "https://cdn.mos.cms.futurecdn.net/eM9EvWyDxXcnQTTyH8c8p5-1200-80.jpg"
-        );
+      cy.get("#card-list  img").last().should("have.attr", "src", imageLink);
     });
 
     it("And the new item should be stored in the localStorage", () => {
@@ -89,10 +82,10 @@ describe("Image Registration", () => {
         const currentyLs = ls[window.location.origin];
         const elements = JSON.parse(Object.values(currentyLs));
         const lastElement = elements[elements.length - 1];
+
         expect(lastElement).to.deep.equal({
           title: "Alien BR",
-          imageUrl:
-            "https://cdn.mos.cms.futurecdn.net/eM9EvWyDxXcnQTTyH8c8p5-1200-80.jpg",
+          imageUrl: imageLink,
         });
       });
     });
