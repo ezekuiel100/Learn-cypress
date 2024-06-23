@@ -89,5 +89,55 @@ describe("Image Registration", () => {
         });
       });
     });
+
+    describe("Submitting an image and updating the list", () => {
+      it("Given I am on the image registration page", () => {
+        cy.visit("/");
+      });
+
+      it("Then I have entered 'BR Alien' in the title field", () => {
+        cy.get(elements.title).type("BR Alien");
+      });
+
+      it(`Then I have entered ${imageLink} in the URL field`, () => {
+        cy.get(elements.imageUrl).type(imageLink);
+      });
+
+      it("When I click the submit button", () => {
+        cy.get("#card-list .card-img").then((images) => {
+          const initialCount = images.length;
+          Cypress.env("initialCount", initialCount);
+        });
+
+        cy.get(elements.btnSubmit).click();
+        cy.wait(1000);
+      });
+
+      it("And the list of registered images should be updated with the new item", () => {
+        const initialCount = Cypress.env("initialCount");
+
+        cy.get("#card-list .card-img").then((images) => {
+          expect(images.length).to.equal(initialCount + 1);
+        });
+      });
+
+      it("And the new item should be stored in the localStorage", () => {
+        cy.getAllLocalStorage().then((ls) => {
+          const currentyLs = ls[window.location.origin];
+          const element = JSON.parse(Object.values(currentyLs));
+          const lastElement = element[element.length - 1];
+
+          expect(lastElement).to.deep.equal({
+            title: "BR Alien",
+            imageUrl: imageLink,
+          });
+        });
+      });
+
+      it("The inputs should be cleared", () => {
+        cy.get(elements.title).should("have.value", "");
+        cy.get(elements.imageUrl).should("have.value", "");
+      });
+    });
   });
 });
