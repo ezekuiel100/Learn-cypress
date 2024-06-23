@@ -140,4 +140,27 @@ describe("Image Registration", () => {
       });
     });
   });
+
+  describe("Refreshing the page after submitting an image clicking in the submit button", () => {
+    it("Given I am on the image registration page", () => {
+      cy.visit("/");
+    });
+
+    it("Then I have submitted an image by clicking the submit button", () => {
+      cy.get(elements.title).type("text");
+      cy.get(elements.imageUrl).type(imageLink);
+
+      cy.get(elements.btnSubmit).click();
+    });
+
+    it("When I refresh the page", () => {
+      cy.reload();
+    });
+
+    it("Then I should still see the submitted image in the list of registered images", () => {
+      cy.get("#card-list .card-img")
+        .last()
+        .should("have.attr", "src", imageLink);
+    });
+  });
 });
